@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅프로그램</title>
+</head>
+<body>
+    <ul id="message" type="none">
+        <li id="usercount"></li>
+    </ul>
+
+    <form id="msgform">
+        <input id="msginput" autocomplete="off" type="text">
+        <button type="submit">전송</button>
+    </form>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+<script>
+    let socket = io();
+    let msgform = document.getElementById('msgform');
+    // socket.on 함수로 서버에서 전달하는 신호를 수신
+    socket.on('usercount', (count) => {
+        let userCounter = document.getElementById('usercount');
+        userCounter.innerText = '현재 ' + count + "명이 서버에 접속해 있습니다.";
+    });
+
+    // 메세지 수신 시 HTML이 메세지 내용 작성
+    socket.on('message', (msg) => {
+        let messageList = document.getElementById('messages');
+        let messageTag = document.createElement("li");
+        messageTag.innerText = msg;
+        messageList.appendChild(messageTag);
+    });
+
+    msgform.onsubmit = (e) => {
+        e.preventDefault();
+        let msgInput = document.getElementById('msginput');
+
+        // socket.emit으로 서버에 신호를 전달
+        socket.emit('message', msgInput.value);
+
+        msgInput.value = "";
+    };
+</script>
+</html>

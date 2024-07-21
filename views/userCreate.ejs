@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유저등록</title>
+</head>
+<body>
+    <form id="userForm">
+        <input id="userName" autocomplete="off" type="text">
+        <button type="submit">전송</button>
+    </form>
+    <button id="joinChat" type="submit">채팅방 입장</button>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+<script>
+    let socket = io();
+    let userForm = document.getElementById('userForm');
+    let join = document.getElementById('joinChat');
+
+    userForm.onsubmit = (e) => {
+        e.preventDefault();
+        let userName = document.getElementById('userName').value;
+        socket.emit('createUser', { username: userName });
+        userName.value = "";
+
+        socket.on('userCreated', (data) => {
+            alert(`유저 생성 : ${data.username}`);
+            localStorage.setItem('userId', socket.id);
+        });
+    }
+
+    join.onclick = () => {
+        window.location.href = '/';
+    }
+    
+</script>
+</html>
