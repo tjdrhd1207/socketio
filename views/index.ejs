@@ -20,8 +20,15 @@
 <script>
     let socket = io();
     let msgform = document.getElementById('msgform');
+
+    // chat 방으로 접속
+    socket.emit('joinChat', () => {
+        console.log('접속');
+    });
+
     // socket.on 함수로 서버에서 전달하는 신호를 수신
     socket.on('usercount', (count) => {
+        console.log("받은 갯수 : "+count);
         let userCounter = document.getElementById('usercount');
         userCounter.innerText = '현재 ' + count + "명이 서버에 접속해 있습니다.";
     });
@@ -33,6 +40,13 @@
         messageTag.innerText = msg;
         messageList.appendChild(messageTag);
     });
+
+
+    // 사용자가 떠날 때
+    // window.addEventListener('beforeunload', () => {
+    //     console.log('사용자 떠남');
+    //     socket.emit('leaveChat', socket);
+    // });
 
     msgform.onsubmit = (e) => {
         e.preventDefault();

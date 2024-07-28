@@ -8,8 +8,9 @@
 <body>
     <form id="userForm">
         <input id="userName" autocomplete="off" type="text">
-        <button type="submit">전송</button>
+        <button type="submit">만들기</button>
     </form>
+    <h2 class="nickName"></h2>
     <button id="joinChat" type="submit">채팅방 입장</button>
 </body>
 
@@ -27,12 +28,17 @@
 
         socket.on('userCreated', (data) => {
             alert(`유저 생성 : ${data.username}`);
+            const nickName = document.querySelector('.nickName');
+            nickName.innerHTML = data.username;
             localStorage.setItem('userId', socket.id);
         });
     }
 
     join.onclick = () => {
-        window.location.href = '/';
+    socket.emit('joinChat', ()=> {
+        console.log('조인');
+    });
+        window.location.href = '/chat';
     }
     
 </script>

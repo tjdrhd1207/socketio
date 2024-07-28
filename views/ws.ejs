@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+<scipt>
+    const socket = io();
+
+    socket.on('usercount', (count) => {
+        window.parent.postMessage({ type: 'usercount', data: count }, '*');
+    });
+
+    socket.on('message', (msg) => {
+        window.parent.postMessage({ type: 'message', data: msg }, '*');
+    });
+
+    window.addEventListener('message', (event) => {
+        const { type, data } = event.data;
+        if (type === 'message') {
+            socket.emit('message', data);
+        }
+    });
+</scipt>
+</html>
