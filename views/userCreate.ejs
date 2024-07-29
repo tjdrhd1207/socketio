@@ -19,7 +19,7 @@
     let socket = io();
     let userForm = document.getElementById('userForm');
     let join = document.getElementById('joinChat');
-
+    let userKey = null;
     userForm.onsubmit = (e) => {
         e.preventDefault();
         let userName = document.getElementById('userName').value;
@@ -30,16 +30,15 @@
             alert(`유저 생성 : ${data.username}`);
             const nickName = document.querySelector('.nickName');
             nickName.innerHTML = data.username;
-            localStorage.setItem('userId', socket.id);
+            userKey = socket.id;
         });
     }
 
     join.onclick = () => {
-    socket.emit('joinChat', ()=> {
-        console.log('조인');
-    });
         window.location.href = '/chat';
+        // socket.emit('reconnect_attempt', { userId: socket.id });
+        localStorage.setItem('userId', socket.id);
     }
-    
+
 </script>
 </html>

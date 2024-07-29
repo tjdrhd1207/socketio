@@ -21,13 +21,22 @@ io.on('connection', (socket) => {   // 연결이 들어오면 실행되는 이�
 
     // socket.emit으로 현재 연결한 상대에게 신호를 보냄
 
-    socket.on('joinChat', () => {
-        clients[socket.id] = socket;
+    socket.on('reconnect_attempt', (user) => {
+        clients[user.userId] = socket;
         countUser();
-        console.log('채팅방에 Join한 Client 정보');
-        Object.keys(clients).forEach(clientId => {
-            console.log(`남아있는 Client ID : ${clientId}`);
-        });
+
+        let temp = clients[user.userId];
+        // io.emit('handOverUserInfo', users);
+        // Object.keys(clients).forEach(clientId => {
+        //     socket.emit('handOverUserInfo', clientId);
+        // });
+        console.log(users);
+        console.log(temp);
+        users.map((user) => {
+            io.emit('handOverUserInfo', user.username);
+
+        })
+        // let username = getUserNameById(user.userId);
     });
     
     // on 함수로 이벤트를 정의해 신호를 수신할 수 있음
@@ -61,13 +70,13 @@ io.on('connection', (socket) => {   // 연결이 들어오면 실행되는 이�
         console.log('채팅방 나간대~')
     });
 
-    // socket.on('disconnect', () => {
-    //     console.log(`Client disconnected : ${socket.id}`);
-    //     delete clients[socket.id];
-    //     Object.keys(clients).forEach(clientId => {
-    //         console.log(`남아있는 Client ID : ${clientId}`);
-    //     });
-    // })
+    socket.on('disconnect', () => {
+        console.log(`Client disconnected : ${socket.id}`);
+        delete clients[socket.id];
+        Object.keys(clients).forEach(clientId => {
+            console.log(`남아있는 Client ID : ${clientId}`);
+        });
+    })
 
     socket.on('userAuth', (data) => {
     })
@@ -100,6 +109,11 @@ function countUser() {
     console.log('유저수');
     console.log(userCount);
     io.emit('usercount', userCount);
+}
+
+function getUserNameById(id) {
+    let user = users.find(user => user.id === id);
+    return user ? user.username : null;
 }
 
 setInterval(allConnectedClients, 5000);

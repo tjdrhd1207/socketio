@@ -14,6 +14,9 @@
         <input id="msginput" autocomplete="off" type="text">
         <button type="submit">전송</button>
     </form>
+
+    <ul class="userList">
+    </ul>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
@@ -21,9 +24,13 @@
     let socket = io();
     let msgform = document.getElementById('msgform');
 
-    // chat 방으로 접속
-    socket.emit('joinChat', () => {
-        console.log('접속');
+    socket.on('connect', () => {
+        console.log('Socket connected');
+
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            socket.emit('reconnect_attempt', { userId: userId });
+        }
     });
 
     // socket.on 함수로 서버에서 전달하는 신호를 수신
@@ -41,6 +48,15 @@
         messageList.appendChild(messageTag);
     });
 
+    // 사용자 이름을 알아내기
+    socket.on('handOverUserInfo', (user) => {
+        console.log('사용자 소켓 조회 호출');
+        const userElement = document.createElement('li');
+        const userList = document.querySelector('.userList');
+
+        userElement.innerText = user;
+        userList.appendChild(userElement);
+    });
 
     // 사용자가 떠날 때
     // window.addEventListener('beforeunload', () => {
